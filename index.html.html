@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora 2026 — Tu sistema de crecimiento en IA, Data y Cloud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080D1A; --surf:#0F1829; --surf2:#1A2B4A; --line:#1E2E48;
+  --cyan:#00D4FF; --amber:#F2A65A; --mint:#5FB89C; --rose:#E0556B; --violet:#8C7CF0;
+  --text:#E8EDF5; --dim:#7C8AA3; --dimmer:#3A4A62; --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;letter-spacing:-0.02em;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:var(--cyan);text-decoration:none;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px;}
+.tag-pill{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--dim);background:var(--surf);}
+.tag-pill.cyan{border-color:rgba(0,212,255,.35);color:var(--cyan);background:rgba(0,212,255,.07);}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(8,13,26,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;max-width:1080px;margin:0 auto;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--cyan) 0%,var(--violet) 100%);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#080D1A;}
+.logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;}
+.logo-text span{color:var(--cyan);}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{font-size:13px;color:var(--dim);transition:color .15s;}
+.nav-links a:hover{color:var(--text);}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--cyan);color:#080D1A;font-weight:700;font-size:14px;padding:10px 22px;border-radius:9px;border:none;cursor:pointer;font-family:'Syne',sans-serif;transition:transform .15s,opacity .15s;}
+.btn-primary:hover{transform:translateY(-1px);opacity:.9;}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--text);font-weight:600;font-size:14px;padding:10px 22px;border-radius:9px;border:1px solid var(--line);cursor:pointer;transition:border-color .15s;}
+.btn-secondary:hover{border-color:var(--dim);}
+@media(max-width:600px){.nav-links{display:none;}}
+
+/* HERO */
+.hero{padding:90px 22px 70px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(0,212,255,.07) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+@media(max-width:760px){.hero-inner{grid-template-columns:1fr;}}
+.hero-badge{margin-bottom:20px;}
+.hero h1{font-size:clamp(34px,5vw,58px);font-weight:800;line-height:1.05;margin-bottom:18px;}
+.hero h1 .hl{color:var(--cyan);}
+.hero-sub{font-size:16px;color:var(--dim);line-height:1.7;max-width:480px;margin-bottom:28px;}
+.hero-sub strong{color:var(--text);font-weight:600;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* TERMINAL */
+.terminal{background:#060B16;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 28px 60px rgba(0,0,0,.5);}
+.term-bar{background:var(--surf);padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line);}
+.term-dot{width:10px;height:10px;border-radius:50%;}
+.term-title{margin:0 auto;font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.term-body{padding:20px;min-height:270px;}
+.term-line{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.9;color:var(--dim);opacity:0;}
+.term-line.show{opacity:1;}
+.term-line .p{color:var(--cyan);}
+.term-line .ok{color:var(--mint);}
+.term-line .warn{color:var(--amber);}
+.term-line .val{color:var(--text);}
+.term-line .cm{color:#3A4A62;}
+.cursor{display:inline-block;width:8px;height:13px;background:var(--cyan);animation:blink 1s step-end infinite;vertical-align:middle;margin-left:2px;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* STATS BAR */
+.stats-bar{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 22px;}
+.stats-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center;}
+@media(max-width:600px){.stats-inner{grid-template-columns:repeat(2,1fr);}}
+.stat-num{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--cyan);line-height:1;}
+.stat-lbl{font-size:12px;color:var(--dim);margin-top:5px;}
+
+/* SECTIONS */
+section{padding:80px 22px;}
+.section-eye{font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px;}
+.section-h{font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-bottom:14px;}
+.section-sub{font-size:15px;color:var(--dim);line-height:1.65;max-width:540px;}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px;}
+@media(max-width:720px){.features-grid{grid-template-columns:1fr;}}
+.feat-card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:22px;transition:border-color .2s;}
+.feat-card:hover{border-color:var(--surf2);}
+.feat-icon{font-size:22px;margin-bottom:11px;}
+.feat-title{font-size:14px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:6px;}
+.feat-desc{font-size:12.5px;color:var(--dim);line-height:1.65;}
+
+/* ROUTES */
+.routes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px;}
+@media(max-width:720px){.routes-grid{grid-template-columns:1fr;}}
+.route-card{border-radius:16px;padding:24px;border:1px solid var(--line);position:relative;overflow:hidden;}
+.route-card.ia{background:linear-gradient(135deg,rgba(140,124,240,.09) 0%,var(--surf) 60%);border-color:rgba(140,124,240,.25);}
+.route-card.data{background:linear-gradient(135deg,rgba(0,212,255,.09) 0%,var(--surf) 60%);border-color:rgba(0,212,255,.25);}
+.route-card.cloud{background:linear-gradient(135deg,rgba(95,184,156,.09) 0%,var(--surf) 60%);border-color:rgba(95,184,156,.25);}
+.route-icon{font-size:28px;margin-bottom:13px;}
+.route-name{font-size:18px;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:8px;}
+.route-card.ia .route-name{color:var(--violet);}
+.route-card.data .route-name{color:var(--cyan);}
+.route-card.cloud .route-name{color:var(--mint);}
+.route-desc{font-size:13px;color:var(--dim);line-height:1.65;margin-bottom:14px;}
+.route-tools{display:flex;flex-wrap:wrap;gap:6px;}
+.route-tool{font-size:10px;font-family:'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;background:rgba(255,255,255,.04);color:var(--dim);border:1px solid var(--line);}
+
+/* DOWNLOAD CTA */
+.download-sect{padding:70px 22px;}
+.download-inner{max-width:1080px;margin:0 auto;background:linear-gradient(135deg,rgba(0,212,255,.06) 0%,rgba(140,124,240,.06) 100%);border:1px solid rgba(0,212,255,.2);border-radius:24px;padding:56px 40px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;}
+@media(max-width:640px){.download-inner{grid-template-columns:1fr;padding:36px 24px;}}
+.download-h{font-size:clamp(22px,3vw,34px);font-weight:800;margin-bottom:10px;}
+.download-sub{font-size:15px;color:var(--dim);line-height:1.65;}
+.download-checks{display:flex;flex-direction:column;gap:8px;margin-top:18px;}
+.download-check{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);}
+.download-check::before{content:'✓';color:var(--mint);font-weight:700;font-size:14px;flex-shrink:0;}
+.btn-download{display:inline-flex;align-items:center;gap:10px;background:var(--cyan);color:#080D1A;font-weight:800;font-size:15px;padding:15px 28px;border-radius:11px;border:none;cursor:pointer;white-space:nowrap;font-family:'Syne',sans-serif;transition:transform .15s;}
+.btn-download:hover{transform:translateY(-2px);}
+.btn-download-note{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;margin-top:8px;text-align:center;}
+
+/* STEPS */
+.steps-list{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative;}
+.steps-list::before{content:'';position:absolute;left:21px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--cyan),var(--violet),transparent);}
+.step-item{display:flex;gap:24px;padding-bottom:34px;position:relative;}
+.step-item:last-child{padding-bottom:0;}
+.step-num{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:var(--surf);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--cyan);position:relative;z-index:1;}
+.step-num.done{background:rgba(0,212,255,.12);border-color:var(--cyan);}
+.step-body{padding-top:10px;}
+.step-tag{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:5px;}
+.step-title{font-size:16px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:5px;}
+.step-desc{font-size:13px;color:var(--dim);line-height:1.65;}
+
+/* COMING SOON */
+.coming-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px;}
+@media(max-width:720px){.coming-grid{grid-template-columns:1fr;}}
+.coming-card{background:var(--surf);border:1px dashed var(--dimmer);border-radius:14px;padding:20px;position:relative;}
+.coming-badge{position:absolute;top:14px;right:14px;font-size:9px;font-family:'JetBrains Mono',monospace;background:rgba(242,166,90,.12);color:var(--amber);border:1px solid rgba(242,166,90,.3);border-radius:20px;padding:2px 8px;letter-spacing:.07em;text-transform:uppercase;}
+.coming-icon{font-size:20px;margin-bottom:10px;}
+.coming-title{font-size:13.5px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:6px;color:var(--dim);}
+.coming-desc{font-size:12px;color:var(--dimmer);line-height:1.6;}
+
+/* CHANNELS */
+.channels-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:640px){.channels-inner{grid-template-columns:1fr;}}
+.channel-card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:26px 24px;display:flex;align-items:flex-start;gap:18px;transition:border-color .2s;}
+.channel-card:hover{border-color:var(--surf2);}
+.channel-ico{font-size:30px;flex-shrink:0;}
+.channel-name{font-size:17px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:4px;}
+.channel-desc{font-size:13px;color:var(--dim);line-height:1.65;}
+.channel-link{display:inline-flex;align-items:center;gap:5px;margin-top:12px;font-size:12px;color:var(--cyan);font-family:'JetBrains Mono',monospace;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:34px 22px;}
+.foot-inner{max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.foot-brand{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.foot-brand span{color:var(--cyan);}
+.foot-note{font-size:11.5px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease;}
+.reveal.visible{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;}.cursor{animation:none;}.term-line{opacity:1;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="logo-mark">B</div>
+      <div class="logo-text">Bitácora<span>Tech</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#incluye">¿Qué incluye?</a>
+      <a href="#rutas">Rutas</a>
+      <a href="#plan">Plan MVP</a>
+      <a href="#canales">Canales</a>
+    </div>
+    <a href="#descarga" class="btn-primary">⬇ Descargar gratis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge reveal"><span class="tag-pill cyan">✦ herramienta gratuita · 2026</span></div>
+      <h1 class="reveal">Tu sistema para<br>entrar a <span class="hl">IA, Data<br>y Cloud.</span></h1>
+      <p class="hero-sub reveal"><strong>Bitácora 2026</strong> es un panel de control personal que te ayuda a ejecutar tu plan de estudio, llevar la racha diaria y no perder el hilo entre el pregrado y los cursos MOOC — todo en un archivo que funciona desde tu navegador, <strong>sin cuentas ni suscripciones.</strong></p>
+      <div class="hero-actions reveal">
+        <a href="#descarga" class="btn-primary">⬇ Descargar gratis</a>
+        <a href="#rutas" class="btn-secondary">Ver rutas →</a>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="terminal">
+        <div class="term-bar">
+          <div class="term-dot" style="background:#E0556B"></div>
+          <div class="term-dot" style="background:#F2A65A"></div>
+          <div class="term-dot" style="background:#5FB89C"></div>
+          <span class="term-title">bitacora-2026 — bash</span>
+        </div>
+        <div class="term-body">
+          <div class="term-line" id="tl0"><span class="p">~/growth</span> $ <span class="val">./bitacora init</span></div>
+          <div class="term-line" id="tl1"><span class="cm"># Cargando perfil de crecimiento...</span></div>
+          <div class="term-line" id="tl2"><span class="ok">✓</span> Ruta activa: <span class="val">MLOps Specialization</span></div>
+          <div class="term-line" id="tl3"><span class="ok">✓</span> Pregrado Poli: <span class="val">Semestre 1 en curso</span></div>
+          <div class="term-line" id="tl4"><span class="warn">⚡</span> Hito próximo: <span class="val">Quiz Cálculo — 2 días</span></div>
+          <div class="term-line" id="tl5"><span class="ok">✓</span> Checklist hoy: <span class="val">2/4 completadas</span></div>
+          <div class="term-line" id="tl6"><span class="cm"># Racha actual: 7 días seguidos 🔥</span></div>
+          <div class="term-line" id="tl7"><span class="p">~/growth</span> $ <span class="val">_</span><span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="reveal"><div class="stat-num">10</div><div class="stat-lbl">áreas de crecimiento mapeadas</div></div>
+    <div class="reveal"><div class="stat-num">2</div><div class="stat-lbl">rutas en paralelo (Poli + MOOC)</div></div>
+    <div class="reveal"><div class="stat-num">100%</div><div class="stat-lbl">virtual, sin apps adicionales</div></div>
+    <div class="reveal"><div class="stat-num">$0</div><div class="stat-lbl">precio. Para siempre gratuito</div></div>
+  </div>
+</div>
+
+<!-- QUÉ INCLUYE -->
+<section id="incluye">
+  <div class="wrap">
+    <p class="section-eye reveal">¿Qué incluye?</p>
+    <h2 class="section-h reveal">Un sistema completo<br>en un solo archivo.</h2>
+    <p class="section-sub reveal">Sin instalar nada. Abre el archivo en tu navegador y empieza el mismo día. Tu progreso se guarda en tu dispositivo.</p>
+    <div class="features-grid">
+      <div class="feat-card reveal"><div class="feat-icon">📡</div><div class="feat-title">Radar de hitos</div><div class="feat-desc">Vista de 14 días con tus fechas límite de exámenes, entregas y módulos. Añade y edita sin salir del panel.</div></div>
+      <div class="feat-card reveal"><div class="feat-icon">✅</div><div class="feat-title">Checklist diario</div><div class="feat-desc">4 bloques de estudio para 2–4 horas diarias. Calcula tu racha de días consecutivos automáticamente.</div></div>
+      <div class="feat-card reveal"><div class="feat-icon">🎓</div><div class="feat-title">Dos rutas de formación</div><div class="feat-desc">Pregrado Poli + Roadmap MOOC (MLOps, Cloud, Deep Learning). Progreso visual por fase con niveles bloqueados y activos.</div></div>
+      <div class="feat-card reveal"><div class="feat-icon">🗺</div><div class="feat-title">Mapa de áreas 2026</div><div class="feat-desc">10 áreas de alta demanda con dificultad, tiempo estimado, costo, herramientas y países que más contratan.</div></div>
+      <div class="feat-card reveal"><div class="feat-icon">📚</div><div class="feat-title">Ranking de plataformas</div><div class="feat-desc">Top 10 ordenadas por reputación: Coursera, edX, Google Cloud, AWS, DeepLearning.AI y más. Con links directos.</div></div>
+      <div class="feat-card reveal"><div class="feat-icon">🔒</div><div class="feat-title">Privacidad total</div><div class="feat-desc">Sin servidores, sin cuentas, sin anuncios. Todo corre localmente. Tu información nunca sale de tu dispositivo.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RUTAS -->
+<section id="rutas" style="background:var(--surf);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <p class="section-eye reveal">Rutas incluidas</p>
+    <h2 class="section-h reveal">Elige tu camino.<br>O elige los tres.</h2>
+    <p class="section-sub reveal">Hoja de ruta detallada para las tres áreas de mayor crecimiento en el mercado tecnológico latinoamericano y global.</p>
+    <div class="routes-grid">
+      <div class="route-card ia reveal">
+        <div class="route-icon">🧠</div>
+        <div class="route-name">IA & Machine Learning</div>
+        <div class="route-desc">Desde Python hasta MLOps en producción. Certificaciones de DeepLearning.AI y Microsoft Azure como ancla.</div>
+        <div class="route-tools"><span class="route-tool">Python</span><span class="route-tool">PyTorch</span><span class="route-tool">MLflow</span><span class="route-tool">Azure ML</span><span class="route-tool">SageMaker</span></div>
+      </div>
+      <div class="route-card data reveal">
+        <div class="route-icon">📊</div>
+        <div class="route-name">Data Engineering</div>
+        <div class="route-desc">Pipelines de datos reales con BigQuery, Spark y Airflow. Para roles de Data Engineer en empresas de tecnología.</div>
+        <div class="route-tools"><span class="route-tool">SQL</span><span class="route-tool">BigQuery</span><span class="route-tool">Spark</span><span class="route-tool">Airflow</span><span class="route-tool">dbt</span></div>
+      </div>
+      <div class="route-card cloud reveal">
+        <div class="route-icon">☁️</div>
+        <div class="route-name">Cloud Computing</div>
+        <div class="route-desc">Arquitectura cloud con AWS, GCP y Azure. Certifica con AWS ML Engineer Associate o Google Cloud Professional.</div>
+        <div class="route-tools"><span class="route-tool">AWS</span><span class="route-tool">GCP</span><span class="route-tool">Azure</span><span class="route-tool">Terraform</span><span class="route-tool">Docker</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESCARGA -->
+<section class="download-sect" id="descarga">
+  <div class="download-inner">
+    <div>
+      <h2 class="download-h">Descarga el Panel.<br><span style="color:var(--cyan)">Empieza hoy.</span></h2>
+      <p class="download-sub">Un archivo HTML. Lo abres en Chrome, Firefox o Safari. No necesitas instalar nada más.</p>
+      <div class="download-checks">
+        <span class="download-check">Compatible con computador y celular</span>
+        <span class="download-check">Funciona sin conexión a internet</span>
+        <span class="download-check">Personalizable — código abierto y legible</span>
+        <span class="download-check">Actualizaciones gratuitas para siempre</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <a href="panel-crecimiento-2026.html" download class="btn-download">⬇ Descargar gratis</a>
+      <span class="btn-download-note">panel-crecimiento-2026.html · ~34 KB</span>
+    </div>
+  </div>
+</section>
+
+<!-- PLAN MVP -->
+<section id="plan">
+  <div class="wrap">
+    <p class="section-eye reveal">Hoja de ruta del proyecto</p>
+    <h2 class="section-h reveal">Cómo vamos a<br>construir esto.</h2>
+    <p class="section-sub reveal">El plan de lanzamiento paso a paso, desde la primera descarga hasta la primera comunidad activa.</p>
+    <div class="steps-list">
+      <div class="step-item reveal">
+        <div class="step-num done">01</div>
+        <div class="step-body">
+          <div class="step-tag">✓ Completado</div>
+          <div class="step-title">Panel v1 construido</div>
+          <div class="step-desc">Radar de hitos, checklist diario, rutas de formación, mapa de 10 áreas y ranking de plataformas. Archivo HTML único, funciona offline.</div>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num done">02</div>
+        <div class="step-body">
+          <div class="step-tag">✓ Completado</div>
+          <div class="step-title">Landing page de lanzamiento</div>
+          <div class="step-desc">Esta página. Lista para publicar en GitHub Pages, Google Sites o cualquier hosting. Es el destino al que apuntan todos tus posts de LinkedIn y YouTube.</div>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-tag">Siguiente · Esta semana</div>
+          <div class="step-title">Publicar en GitHub Pages</div>
+          <div class="step-desc">Subir los dos archivos (panel + landing) a un repositorio GitHub gratuito para tener una URL pública estable que compartir en LinkedIn y descripción de YouTube.</div>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-tag">Semana 1–2</div>
+          <div class="step-title">Primer post de lanzamiento en LinkedIn</div>
+          <div class="step-desc">Post tipo historia personal: "Soy docente y estoy aprendiendo IA con 2h al día. Construí esta herramienta para no perderme." La herramienta es el gancho; tu historia es la conexión emocional.</div>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <div class="step-tag">Semana 2–3</div>
+          <div class="step-title">Video demo en YouTube</div>
+          <div class="step-desc">"Cómo uso este panel para estudiar IA con 2h al día" — screencast de 8–12 minutos con tu voz. Link de descarga en la descripción y primer comentario fijado.</div>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">06</div>
+        <div class="step-body">
+          <div class="step-tag">Mes 2 en adelante</div>
+          <div class="step-title">Serie de contenido semanal + Panel v2</div>
+          <div class="step-desc">5 posts LinkedIn + 2 videos YouTube al mes. Cada pieza explica una ruta, una plataforma o un hábito probado. El feedback de los primeros usuarios define qué entra en la v2.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRÓXIMAMENTE -->
+<section style="background:var(--surf);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <p class="section-eye reveal">En construcción</p>
+    <h2 class="section-h reveal">Lo que viene<br>después del lanzamiento.</h2>
+    <div class="coming-grid">
+      <div class="coming-card reveal"><div class="coming-badge">Mes 2</div><div class="coming-icon">🎥</div><div class="coming-title">Guía en video: cómo usar el panel</div><div class="coming-desc">Tutorial completo en YouTube: configuración inicial, añadir hitos y adaptar las rutas a tu perfil.</div></div>
+      <div class="coming-card reveal"><div class="coming-badge">Mes 2–3</div><div class="coming-icon">📄</div><div class="coming-title">Guía gratuita: Roadmap IA 2026</div><div class="coming-desc">PDF descargable con el plan completo de 18 meses para entrar a IA/Data/Cloud desde cero, con recursos y costos reales.</div></div>
+      <div class="coming-card reveal"><div class="coming-badge">Mes 3</div><div class="coming-icon">💬</div><div class="coming-title">Comunidad LinkedIn</div><div class="coming-desc">Grupo privado para los primeros 100 usuarios. Seguimiento semanal, feedback directo y acceso anticipado a nuevas versiones.</div></div>
+      <div class="coming-card reveal"><div class="coming-badge">Mes 4</div><div class="coming-icon">⚙️</div><div class="coming-title">Panel v2 — perfiles personalizables</div><div class="coming-desc">Modo "solo MOOC", "solo pregrado" o "freelancer tech". Nuevas áreas: ciberseguridad, product management y AI governance.</div></div>
+      <div class="coming-card reveal"><div class="coming-badge">Mes 5</div><div class="coming-icon">🏆</div><div class="coming-title">Reto #BitácoraChallenge</div><div class="coming-desc">30 días de racha en LinkedIn. Los participantes comparten su pantalla y el mejor streak gana visibilidad y mención en el canal.</div></div>
+      <div class="coming-card reveal"><div class="coming-badge">Mes 6+</div><div class="coming-icon">🌎</div><div class="coming-title">Versión en inglés + expansión global</div><div class="coming-desc">Traducción completa para la diáspora latina en EE.UU., México, Argentina y España.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CANALES -->
+<section id="canales">
+  <div class="wrap">
+    <p class="section-eye reveal">Sígueme</p>
+    <h2 class="section-h reveal">Contenido semanal<br>sobre tecnología real.</h2>
+  </div>
+  <div style="max-width:1080px;margin:32px auto 0;padding:0 22px;">
+    <div class="channels-inner">
+      <div class="channel-card reveal">
+        <div class="channel-ico">💼</div>
+        <div>
+          <div class="channel-name">LinkedIn</div>
+          <div class="channel-desc">Posts semanales sobre rutas de aprendizaje, recursos gratuitos y estrategias para entrar a IA y Data desde Latinoamérica.</div>
+          <a href="https://www.linkedin.com" target="_blank" class="channel-link">→ Conectar en LinkedIn</a>
+        </div>
+      </div>
+      <div class="channel-card reveal">
+        <div class="channel-ico">▶️</div>
+        <div>
+          <div class="channel-name">YouTube</div>
+          <div class="channel-desc">Demos, tutoriales de herramientas gratuitas y el proceso real de estudiar IA con 2 horas al día sin dejar de trabajar.</div>
+          <a href="https://www.youtube.com" target="_blank" class="channel-link">→ Suscribirse al canal</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">Bitácora<span>Tech</span> · 2026</div>
+    <div class="foot-note">Herramienta gratuita para siempre · Hecha desde Colombia 🇨🇴</div>
+  </div>
+</footer>
+
+<script>
+// Terminal animation
+const lines = document.querySelectorAll('.term-line');
+let i = 0;
+function showNext(){
+  if(i < lines.length){ lines[i].classList.add('show'); i++; setTimeout(showNext, i===1?200:340); }
+}
+setTimeout(showNext, 700);
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, {threshold: 0.1});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
