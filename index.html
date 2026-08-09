@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitácoraTech — Tu sistema de crecimiento personal en tecnología</title>
+<meta name="description" content="Panel de control gratuito para organizar tu aprendizaje en tecnología. Totalmente personalizable: tus cursos, tus metas, tu ritmo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080D1A; --surf:#0D1625; --surf2:#132036; --line:#1C2D46;
+  --cyan:#00D4FF; --amber:#F2A65A; --mint:#5FB89C; --violet:#8C7CF0; --rose:#E0556B;
+  --text:#E8EDF5; --dim:#7C8AA3; --muted:#3D5068; --r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6;}
+h1,h2,h3{font-family:'Syne',sans-serif;letter-spacing:-0.025em;line-height:1.08;}
+a{color:var(--cyan);text-decoration:none;}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(8,13,26,.93);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);}
+.nav-in{display:flex;align-items:center;justify-content:space-between;max-width:1060px;margin:0 auto;padding:14px 24px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-badge{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--cyan),var(--violet));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#080D1A;flex-shrink:0;}
+.logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;}
+.logo-name em{font-style:normal;color:var(--cyan);}
+.nav-links{display:flex;gap:26px;}
+.nav-links a{font-size:13px;color:var(--dim);transition:color .15s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{display:inline-flex;align-items:center;gap:7px;background:var(--cyan);color:#080D1A;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:9px 20px;border-radius:8px;border:none;cursor:pointer;transition:opacity .15s,transform .15s;white-space:nowrap;}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px);}
+@media(max-width:620px){.nav-links{display:none;}}
+
+/* HERO */
+.hero{padding:100px 24px 80px;position:relative;overflow:hidden;}
+.hero::after{content:'';pointer-events:none;position:absolute;top:-280px;left:50%;transform:translateX(-50%);width:1000px;height:700px;background:radial-gradient(ellipse,rgba(0,212,255,.065) 0%,transparent 68%);}
+.hero-grid{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+@media(max-width:780px){.hero-grid{grid-template-columns:1fr;}}
+.badge{display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(0,212,255,.3);background:rgba(0,212,255,.06);padding:5px 12px;border-radius:20px;margin-bottom:22px;}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.hero h1{font-size:clamp(38px,5.5vw,62px);font-weight:800;margin-bottom:22px;}
+.hero h1 .hl{color:var(--cyan);}
+.hero-copy{font-size:16px;color:var(--dim);max-width:460px;margin-bottom:36px;line-height:1.8;}
+.hero-copy strong{color:var(--text);font-weight:600;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-main{display:inline-flex;align-items:center;gap:8px;background:var(--cyan);color:#080D1A;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 28px;border-radius:10px;border:none;cursor:pointer;transition:transform .15s,opacity .15s;}
+.btn-main:hover{transform:translateY(-2px);opacity:.9;}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--text);font-weight:600;font-size:15px;padding:14px 24px;border-radius:10px;border:1px solid var(--line);cursor:pointer;transition:border-color .15s;}
+.btn-ghost:hover{border-color:var(--dim);}
+
+/* TERMINAL */
+.terminal{background:#050A14;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 32px 72px rgba(0,0,0,.55);}
+.term-bar{background:var(--surf);padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;}
+.td{width:10px;height:10px;border-radius:50%;}
+.term-label{margin:0 auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);}
+.term-body{padding:20px 22px;min-height:280px;}
+.tl{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:var(--dim);opacity:0;transition:opacity .15s;}
+.tl.on{opacity:1;}
+.tl .pr{color:var(--cyan);}
+.tl .ok{color:var(--mint);}
+.tl .vl{color:var(--text);}
+.tl .blank{display:inline-block;min-width:140px;border-bottom:1px solid var(--muted);color:var(--muted);font-style:italic;}
+.tl .cm{color:var(--muted);}
+.cur{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:middle;margin-left:2px;animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* DIVIDER */
+hr.div{border:none;border-top:1px solid var(--line);margin:0;}
+
+/* STATS */
+.stats{padding:32px 24px;}
+.stats-in{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;}
+@media(max-width:600px){.stats-in{grid-template-columns:repeat(2,1fr);}}
+.stat-n{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--cyan);line-height:1;}
+.stat-l{font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;}
+
+/* SECTIONS */
+.sec{padding:80px 24px;}
+.sec-alt{background:var(--surf);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.eye{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+.sec-h{font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-bottom:14px;}
+.sec-sub{font-size:15.5px;color:var(--dim);line-height:1.7;max-width:560px;}
+
+/* PILLARS */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:50px;}
+@media(max-width:720px){.pillars{grid-template-columns:1fr;}}
+.pillar{background:var(--surf2);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;overflow:hidden;}
+.pillar-accent{position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0;}
+.pillar-icon{font-size:24px;margin-bottom:14px;margin-top:8px;}
+.pillar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+.pillar-desc{font-size:13px;color:var(--dim);line-height:1.7;}
+
+/* PREVIEW PANEL */
+.preview-wrap{margin-top:48px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surf2);}
+.preview-bar{background:var(--surf);padding:11px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;}
+.pbd{width:9px;height:9px;border-radius:50%;}
+.preview-url{margin:0 auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);background:var(--surf2);padding:3px 14px;border-radius:20px;}
+.preview-body{padding:20px;}
+.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:600px){.preview-grid{grid-template-columns:1fr;}}
+.pcard{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:14px;}
+.pcard-eye{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;}
+.pcard-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;}
+.pcard-field{background:var(--surf2);border:1px dashed var(--muted);border-radius:6px;padding:7px 10px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:6px;font-style:italic;}
+.pcard-field.active{border-style:solid;border-color:rgba(0,212,255,.3);color:var(--dim);font-style:normal;}
+.pcard-bar-wrap{height:4px;background:var(--surf2);border-radius:3px;margin-top:10px;overflow:hidden;}
+.pcard-bar{height:100%;border-radius:3px;}
+.preview-caption{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:14px;}
+
+/* PROFILES */
+.profiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:50px;}
+@media(max-width:720px){.profiles{grid-template-columns:1fr;}}
+.profile{border:1px solid var(--line);border-radius:var(--r);padding:26px 22px;display:flex;flex-direction:column;gap:10px;}
+.profile-emoji{font-size:28px;}
+.profile-role{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.profile-desc{font-size:13px;color:var(--dim);line-height:1.65;}
+.profile-tag{margin-top:auto;align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;padding:3px 10px;border-radius:20px;background:rgba(0,212,255,.07);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+
+/* STEPS */
+.steps-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:50px;}
+@media(max-width:720px){.steps-wrap{grid-template-columns:1fr;}}
+.step-card{background:var(--surf2);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;}
+.step-num-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid rgba(0,212,255,.3);background:rgba(0,212,255,.07);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--cyan);margin-bottom:16px;}
+.step-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+.step-desc{font-size:13px;color:var(--dim);line-height:1.65;}
+.step-note{margin-top:12px;padding:10px 12px;border-radius:8px;background:rgba(242,166,90,.07);border:1px solid rgba(242,166,90,.22);font-size:11.5px;color:var(--amber);line-height:1.55;font-family:'JetBrains Mono',monospace;}
+
+/* HONESTY BOX */
+.honesty-wrap{max-width:1060px;margin:0 auto;padding:0 24px 70px;}
+.honesty{border:1px solid rgba(242,166,90,.25);border-radius:14px;background:rgba(242,166,90,.05);padding:26px 30px;display:flex;gap:18px;align-items:flex-start;}
+@media(max-width:600px){.honesty{flex-direction:column;gap:12px;padding:20px;}}
+.honesty-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.honesty-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:7px;}
+.honesty-body{font-size:13px;color:var(--dim);line-height:1.75;}
+.honesty-body strong{color:var(--amber);font-weight:600;}
+
+/* DOWNLOAD */
+.download{padding:60px 24px 90px;}
+.dl-inner{max-width:1060px;margin:0 auto;background:linear-gradient(130deg,rgba(0,212,255,.07) 0%,rgba(140,124,240,.07) 100%);border:1px solid rgba(0,212,255,.18);border-radius:20px;padding:60px 50px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;}
+@media(max-width:680px){.dl-inner{grid-template-columns:1fr;padding:36px 26px;gap:30px;}}
+.dl-h{font-size:clamp(24px,3.2vw,38px);font-weight:800;margin-bottom:12px;}
+.dl-h span{color:var(--cyan);}
+.dl-sub{font-size:15px;color:var(--dim);line-height:1.7;max-width:440px;}
+.dl-checks{display:flex;flex-direction:column;gap:9px;margin-top:20px;}
+.dlc{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--dim);}
+.dlc-ok{color:var(--mint);font-weight:700;font-size:15px;flex-shrink:0;line-height:1.4;}
+.dl-btn-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;}
+.btn-dl{display:inline-flex;align-items:center;gap:10px;background:var(--cyan);color:#080D1A;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;padding:17px 34px;border-radius:12px;border:none;cursor:pointer;white-space:nowrap;transition:transform .15s,opacity .15s;}
+.btn-dl:hover{transform:translateY(-2px);opacity:.9;}
+.btn-dl-note{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dim);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:28px 24px;}
+.foot-in{max-width:1060px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.foot-brand{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.foot-brand em{font-style:normal;color:var(--cyan);}
+.foot-note{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+
+/* REVEAL */
+.r{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease;}
+.r.on{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){.r{opacity:1;transform:none;}.tl{opacity:1;}.cur,.badge-dot{animation:none;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <div class="logo">
+      <div class="logo-badge">B</div>
+      <div class="logo-name">Bitácora<em>Tech</em></div>
+    </div>
+    <div class="nav-links">
+      <a href="#que-es">¿Qué es?</a>
+      <a href="#para-quien">¿Para quién?</a>
+      <a href="#como-funciona">¿Cómo funciona?</a>
+    </div>
+    <a href="#descarga" class="nav-cta">⬇ Gratis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="badge r"><span class="badge-dot"></span>herramienta gratuita · 2026</div>
+      <h1 class="r">Tu panel de<br>crecimiento.<br><span class="hl">A tu manera.</span></h1>
+      <p class="hero-copy r">
+        <strong>BitácoraTech</strong> es un panel de control personal para organizar tu aprendizaje en tecnología.<br>
+        Sin cursos impuestos. Sin instituciones predefinidas.<br>
+        <strong>Tus metas. Tu ritmo. Tu sistema.</strong>
+      </p>
+      <div class="hero-btns r">
+        <a href="#descarga" class="btn-main">⬇ Descargar gratis</a>
+        <a href="#que-es" class="btn-ghost">¿Cómo funciona? →</a>
+      </div>
+    </div>
+    <div class="r">
+      <div class="terminal">
+        <div class="term-bar">
+          <div class="td" style="background:#E0556B"></div>
+          <div class="td" style="background:#F2A65A"></div>
+          <div class="td" style="background:#5FB89C"></div>
+          <span class="term-label">bitacora — tu panel personal</span>
+        </div>
+        <div class="term-body">
+          <div class="tl" id="t0"><span class="pr">~/mi-crecimiento</span> $ <span class="vl">./bitacora init</span></div>
+          <div class="tl" id="t1"><span class="cm"># ¿Cuál es tu meta principal?</span></div>
+          <div class="tl" id="t2"><span class="ok">▸</span> Meta: <span class="blank">la tuya va aquí...</span></div>
+          <div class="tl" id="t3"><span class="cm"># ¿Dónde estudias?</span></div>
+          <div class="tl" id="t4"><span class="ok">▸</span> Plataforma: <span class="blank">tu plataforma favorita</span></div>
+          <div class="tl" id="t5"><span class="cm"># ¿Cuánto tiempo tienes al día?</span></div>
+          <div class="tl" id="t6"><span class="ok">▸</span> Tiempo: <span class="blank">tus horas disponibles</span></div>
+          <div class="tl" id="t7"><span class="ok">✓</span> Panel listo. <span class="vl">Todo es tuyo.</span><span class="cur"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-in">
+    <div class="r"><div class="stat-n">100%</div><div class="stat-l">personalizable desde el primer día</div></div>
+    <div class="r"><div class="stat-n">$0</div><div class="stat-l">precio. Gratis para siempre</div></div>
+    <div class="r"><div class="stat-n">1</div><div class="stat-l">archivo. Sin instalar nada más</div></div>
+    <div class="r"><div class="stat-n">∞</div><div class="stat-l">rutas posibles. Las defines tú</div></div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- QUÉ ES -->
+<section class="sec" id="que-es">
+  <div class="wrap">
+    <p class="eye r">¿Qué es BitácoraTech?</p>
+    <h2 class="sec-h r">No es un curso.<br>Es tu sistema de control.</h2>
+    <p class="sec-sub r">Un panel personal donde organizas <em>tu propio</em> plan de aprendizaje. Lo que estudias, dónde lo estudias y cómo avanzas — lo defines tú desde el primer momento.</p>
+
+    <div class="pillars">
+      <div class="pillar r">
+        <div class="pillar-accent" style="background:linear-gradient(90deg,var(--cyan),var(--violet));"></div>
+        <div class="pillar-icon">📡</div>
+        <div class="pillar-title">Radar de compromisos</div>
+        <div class="pillar-desc">Vista de los próximos días con tus propias fechas límite. Tú agregas tus exámenes, entregas o metas. El panel los organiza visualmente.</div>
+      </div>
+      <div class="pillar r">
+        <div class="pillar-accent" style="background:linear-gradient(90deg,var(--amber),var(--mint));"></div>
+        <div class="pillar-icon">✅</div>
+        <div class="pillar-title">Checklist diario propio</div>
+        <div class="pillar-desc">Tú escribes tus tareas de hoy. El panel registra tu racha de días consecutivos automáticamente y te muestra cuánto avanzaste esta semana.</div>
+      </div>
+      <div class="pillar r">
+        <div class="pillar-accent" style="background:linear-gradient(90deg,var(--violet),var(--rose));"></div>
+        <div class="pillar-icon">🗺</div>
+        <div class="pillar-title">Rutas que tú construyes</div>
+        <div class="pillar-desc">Agrega tus propios cursos, instituciones y etapas. ¿Udemy? ¿tu universidad? ¿YouTube? ¿una app móvil? Todo tiene cabida. Nada está impuesto.</div>
+      </div>
+    </div>
+
+    <!-- Vista previa del panel en blanco -->
+    <div class="preview-wrap r">
+      <div class="preview-bar">
+        <div class="pbd" style="background:#E0556B"></div>
+        <div class="pbd" style="background:#F2A65A"></div>
+        <div class="pbd" style="background:#5FB89C"></div>
+        <div class="preview-url">bitácora · tu panel personal</div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-grid">
+          <div class="pcard">
+            <div class="pcard-eye">Mi ruta activa</div>
+            <div class="pcard-title">Curso principal</div>
+            <div class="pcard-field">escribe tu curso aquí...</div>
+            <div class="pcard-field">tu plataforma de estudio...</div>
+            <div class="pcard-bar-wrap"><div class="pcard-bar" style="width:0%;background:var(--cyan);"></div></div>
+          </div>
+          <div class="pcard">
+            <div class="pcard-eye">Hoy</div>
+            <div class="pcard-title">Mi checklist</div>
+            <div class="pcard-field">tu tarea de hoy...</div>
+            <div class="pcard-field">tu segunda tarea...</div>
+            <div class="pcard-bar-wrap"><div class="pcard-bar" style="width:0%;background:var(--mint);"></div></div>
+          </div>
+          <div class="pcard">
+            <div class="pcard-eye">Próximo hito</div>
+            <div class="pcard-title">Fecha límite</div>
+            <div class="pcard-field">tu examen o entrega...</div>
+            <div class="pcard-field active">Racha: 0 días 🔥</div>
+            <div class="pcard-bar-wrap"><div class="pcard-bar" style="width:0%;background:var(--amber);"></div></div>
+          </div>
+        </div>
+        <p class="preview-caption">↑ Así se ve el panel al abrirlo por primera vez — en blanco, esperándote.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUIÉN -->
+<section class="sec sec-alt" id="para-quien">
+  <div class="wrap">
+    <p class="eye r">¿Para quién es?</p>
+    <h2 class="sec-h r">Para quien quiere<br>avanzar en tecnología<br>con un sistema real.</h2>
+    <p class="sec-sub r">No importa dónde estudias ni cuánto tiempo llevas. Si buscas organización y seguimiento diario, esto es para ti.</p>
+    <div class="profiles">
+      <div class="profile r">
+        <div class="profile-emoji">🚀</div>
+        <div class="profile-role">El que está empezando</div>
+        <div class="profile-desc">Quieres entrar a tecnología pero tienes muchas pestañas abiertas y pocas horas al día. BitácoraTech te da el sistema para no perderte y avanzar con foco.</div>
+        <div class="profile-tag">Empieza desde cero</div>
+      </div>
+      <div class="profile r">
+        <div class="profile-emoji">📚</div>
+        <div class="profile-role">El que ya estudia</div>
+        <div class="profile-desc">Tienes un curso activo — donde sea — pero pierdes el hilo entre semana y semana. El panel centraliza todo en un solo lugar y te muestra dónde estás.</div>
+        <div class="profile-tag">Organiza lo que ya tienes</div>
+      </div>
+      <div class="profile r">
+        <div class="profile-emoji">⚡</div>
+        <div class="profile-role">El que trabaja y estudia</div>
+        <div class="profile-desc">Tienes 1–3 horas al día y necesitas cada minuto bien invertido. El checklist diario y la racha de días te mantienen en movimiento sin quemarte.</div>
+        <div class="profile-tag">Maximiza tu tiempo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="sec" id="como-funciona">
+  <div class="wrap">
+    <p class="eye r">¿Cómo funciona?</p>
+    <h2 class="sec-h r">Tres pasos.<br>Sin complicaciones.</h2>
+    <p class="sec-sub r">Un archivo que abre en cualquier navegador. Nada que instalar. Nada que registrar. Empiezas el mismo día.</p>
+    <div class="steps-wrap">
+      <div class="step-card r">
+        <div class="step-num-badge">01</div>
+        <div class="step-title">Descarga el archivo</div>
+        <div class="step-desc">Un solo archivo HTML. Lo guardas donde quieras y lo abres con Chrome, Firefox o Safari — el navegador que ya tienes en tu dispositivo.</div>
+      </div>
+      <div class="step-card r">
+        <div class="step-num-badge">02</div>
+        <div class="step-title">Configura en 2 minutos</div>
+        <div class="step-desc">Al abrirlo por primera vez, un asistente rápido te pregunta tu nombre, tu meta, tu plataforma de estudio y tu tiempo disponible al día. Solo tus datos, nada más.</div>
+      </div>
+      <div class="step-card r">
+        <div class="step-num-badge">03</div>
+        <div class="step-title">Úsalo cada día</div>
+        <div class="step-desc">Agrega tus compromisos, marca tu checklist y sigue tu racha. El panel crece contigo a tu ritmo.</div>
+        <div class="step-note">💡 Para guardar tu progreso entre sesiones, publícalo en <strong>Google Sites</strong> o <strong>GitHub Pages</strong>. El propio panel te guía en 3 pasos sencillos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HONESTY BOX -->
+<div class="honesty-wrap">
+  <div class="honesty r">
+    <div class="honesty-icon">🔍</div>
+    <div>
+      <div class="honesty-title">Algo que queremos que sepas antes de descargar</div>
+      <div class="honesty-body">
+        BitácoraTech es un archivo local — funciona <strong>sin conexión y sin crear cuentas</strong>. Sin embargo, para que tu progreso se guarde automáticamente entre una sesión y la siguiente, necesitas publicarlo en un servidor sencillo como <strong>Google Sites o GitHub Pages</strong> (los dos son gratuitos). El panel incluye una guía paso a paso para hacerlo sin conocimientos técnicos. Si lo usas solo como archivo descargado sin publicarlo, tendrás que volver a ingresar tus datos cada vez que lo abras.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DESCARGA -->
+<section class="download" id="descarga">
+  <div class="dl-inner">
+    <div>
+      <h2 class="dl-h r">Descarga el panel.<br><span>Hazlo tuyo hoy.</span></h2>
+      <p class="dl-sub r">Un archivo. Sin registro. Sin suscripción. Sin cursos impuestos. Solo tu sistema, a tu manera.</p>
+      <div class="dl-checks r">
+        <div class="dlc"><span class="dlc-ok">✓</span>Funciona en computador y celular</div>
+        <div class="dlc"><span class="dlc-ok">✓</span>Sin instalar aplicaciones adicionales</div>
+        <div class="dlc"><span class="dlc-ok">✓</span>Tus datos nunca salen de tu dispositivo</div>
+        <div class="dlc"><span class="dlc-ok">✓</span>Código abierto — lo puedes personalizar</div>
+        <div class="dlc"><span class="dlc-ok">✓</span>Incluye guía para publicarlo en Google Sites</div>
+      </div>
+    </div>
+    <div class="dl-btn-col r">
+      <a href="panel-crecimiento-2026.html" download class="btn-dl">⬇ Descargar gratis</a>
+      <span class="btn-dl-note">panel-crecimiento-2026.html · ~34 KB</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <div class="foot-brand">Bitácora<em>Tech</em> · 2026</div>
+    <div class="foot-note">Herramienta gratuita para siempre · Hecha desde Colombia 🇨🇴</div>
+  </div>
+</footer>
+
+<script>
+// Terminal: aparece línea por línea
+const delays = [0,160,320,500,660,840,1000,1260];
+document.querySelectorAll('.tl').forEach((el,i) =>
+  setTimeout(() => el.classList.add('on'), 800 + delays[i])
+);
+
+// Scroll reveal
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('on'); ro.unobserve(e.target); }
+  });
+}, {threshold:0.1, rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.r').forEach(el => ro.observe(el));
+</script>
+</body>
+</html>
