@@ -1,32 +1,35 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
 
-  // Solo POST permitido
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Solo POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  // CORS — solo permite llamadas desde tu dominio
-  res.setHeader('Access-Control-Allow-Origin', 'https://bitacoratech.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const { email, whatsapp } = req.body || {};
 
-  const { email, whatsapp } = req.body;
-
-  // Validación básica
+  // Validación
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Correo inválido' });
   }
 
-  // API Key guardada como variable de entorno en Vercel (nunca en el código)
   const BREVO_KEY  = process.env.BREVO_API_KEY;
-  const BREVO_LIST = 2; // ID lista "BitácoraTech Leads"
+  const BREVO_LIST = 2;
 
   if (!BREVO_KEY) {
-    console.error('BREVO_API_KEY no configurada en variables de entorno');
-    return res.status(500).json({ error: 'Configuración incompleta en el servidor' });
+    console.error('BREVO_API_KEY no configurada');
+    return res.status(500).json({ error: 'Configuración incompleta' });
   }
 
-  // Construir contacto
   const attributes = {};
   if (whatsapp && whatsapp.trim()) {
     attributes['WHATSAPP'] = whatsapp.trim();
@@ -47,23 +50,23 @@ export default async function handler(req, res) {
       })
     });
 
-    // 204 = creado, 400 con duplicate_parameter = ya existe → ambos son éxito
-    if (brevoRes.status === 204 || brevoRes.ok) {
+    const text = await brevoRes.text();
+    let data = {};
+    try { data = JSON.parse(text); } catch(e) {}
+
+    if (brevoRes.status === 201 || brevoRes.status === 204 || brevoRes.ok) {
       return res.status(200).json({ ok: true });
     }
 
-    const data = await brevoRes.json().catch(() => ({}));
-
     if (brevoRes.status === 400 && data.code === 'duplicate_parameter') {
-      // Contacto ya existe — igual desbloqueamos la descarga
-      return res.status(200).json({ ok: true, note: 'contacto existente actualizado' });
+      return res.status(200).json({ ok: true, note: 'contacto existente' });
     }
 
     console.error('Brevo error:', brevoRes.status, data);
-    return res.status(502).json({ error: 'Error al registrar en Brevo', detail: data.message });
+    return res.status(502).json({ error: 'Error Brevo', detail: data.message || text });
 
   } catch (err) {
-    console.error('Fetch error:', err);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('Error interno:', err.message);
+    return res.status(500).json({ error: 'Error interno', detail: err.message });
   }
-}
+};
