@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BitácoraTech — Mi Panel Personal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1220; --surf:#121B2E; --surf2:#16223A; --line:#23304A;
+  --cyan:#00D4FF; --amber:#F2A65A; --mint:#5FB89C; --rose:#E0556B; --violet:#8C7CF0;
+  --text:#E8EDF5; --dim:#7C8AA3; --muted:#3D5068; --r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ── WIZARD OVERLAY ── */
+#wizard{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(8,13,26,0.97);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.wiz-card{
+  background:var(--surf);border:1px solid var(--line);
+  border-radius:20px;width:100%;max-width:480px;
+  padding:32px 28px;
+}
+.wiz-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.wiz-logo-badge{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:14px;color:#0B1220;
+}
+.wiz-logo-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;}
+.wiz-logo-name em{font-style:normal;color:var(--cyan);}
+.wiz-progress{display:flex;gap:6px;margin-bottom:24px;}
+.wiz-pip{height:3px;flex:1;border-radius:3px;background:var(--line);transition:background .3s;}
+.wiz-pip.done{background:var(--cyan);}
+.wiz-pip.active{background:rgba(0,212,255,.4);}
+.wiz-step{display:none;}
+.wiz-step.on{display:block;}
+.wiz-eye{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px;}
+.wiz-title{font-size:22px;font-weight:700;margin-bottom:8px;line-height:1.2;}
+.wiz-sub{font-size:14px;color:var(--dim);line-height:1.65;margin-bottom:22px;}
+.wiz-label{font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:7px;}
+.wiz-input{
+  width:100%;background:var(--surf2);border:1px solid var(--line);
+  color:var(--text);padding:12px 14px;border-radius:9px;
+  font-size:14px;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .2s;margin-bottom:14px;
+}
+.wiz-input:focus{border-color:rgba(0,212,255,.5);}
+.wiz-input::placeholder{color:var(--muted);}
+.wiz-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chip{
+  padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surf2);color:var(--dim);
+  transition:all .15s;user-select:none;
+}
+.chip.selected{border-color:var(--cyan);background:rgba(0,212,255,.1);color:var(--cyan);}
+.wiz-actions{display:flex;gap:10px;margin-top:6px;}
+.btn-wiz-back{
+  flex:0 0 auto;padding:12px 18px;border-radius:9px;
+  border:1px solid var(--line);background:transparent;color:var(--dim);
+  font-size:13px;cursor:pointer;transition:border-color .15s;
+}
+.btn-wiz-back:hover{border-color:var(--dim);}
+.btn-wiz-next{
+  flex:1;padding:12px;border-radius:9px;
+  background:var(--cyan);color:#0B1220;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;
+  border:none;cursor:pointer;transition:opacity .15s,transform .15s;
+}
+.btn-wiz-next:hover{opacity:.9;transform:translateY(-1px);}
+.btn-wiz-next:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+/* ── DASHBOARD (oculto hasta que se complete wizard) ── */
+#dashboard{display:none;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(11,18,32,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding:13px 18px;
+}
+.topbar-in{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.top-brand{display:flex;align-items:center;gap:8px;}
+.top-badge{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--cyan),var(--violet));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:11px;color:#0B1220;flex-shrink:0;}
+.top-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;}
+.top-name em{font-style:normal;color:var(--cyan);}
+.top-right{display:flex;align-items:center;gap:14px;}
+.streak-wrap{text-align:right;}
+.streak-n{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--amber);line-height:1;}
+.streak-l{font-size:9px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;}
+.today-txt{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.btn-edit-profile{
+  font-size:11px;font-family:'JetBrains Mono',monospace;
+  padding:5px 12px;border-radius:20px;border:1px solid var(--line);
+  background:transparent;color:var(--dim);cursor:pointer;transition:border-color .15s;white-space:nowrap;
+}
+.btn-edit-profile:hover{border-color:var(--dim);}
+
+/* ── MAIN CONTENT ── */
+.main{max-width:900px;margin:0 auto;padding:18px 18px 60px;}
+
+/* ── GREETING ── */
+.greeting{
+  background:linear-gradient(130deg,rgba(0,212,255,.06) 0%,rgba(140,124,240,.06) 100%);
+  border:1px solid rgba(0,212,255,.15);border-radius:14px;
+  padding:18px 20px;margin-bottom:20px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.greeting-left h2{font-size:17px;font-weight:700;margin-bottom:3px;}
+.greeting-left p{font-size:13px;color:var(--dim);}
+.greeting-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);text-align:right;}
+.greeting-meta span{display:block;color:var(--cyan);font-size:13px;font-weight:500;}
+
+/* ── SECTION HEAD ── */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 10px;}
+.sec-eye{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);font-family:'JetBrains Mono',monospace;}
+.sec-h{font-size:15px;font-weight:700;margin-top:2px;}
+.sec-hint{font-size:11px;color:var(--dim);}
+
+/* ── RADAR ── */
+.radar{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:14px;overflow-x:auto;}
+.radar-track{display:flex;position:relative;min-width:600px;padding-top:6px;}
+.radar-track::before{content:'';position:absolute;top:24px;left:0;right:0;height:1px;background:var(--line);}
+.radar-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:42px;position:relative;}
+.r-dow{font-size:9px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+.r-dnum{font-size:12px;font-weight:600;}
+.radar-day.today .r-dnum{color:var(--cyan);}
+.blip-stack{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:12px;}
+.blip{width:8px;height:8px;border-radius:50%;flex-shrink:0;cursor:default;}
+.blip.personal{background:var(--cyan);}
+.blip.estudio{background:var(--mint);}
+.blip.trabajo{background:var(--amber);}
+.blip.otro{background:var(--violet);}
+.r-axis{width:4px;height:4px;border-radius:50%;background:var(--line);}
+.radar-day.today .r-axis{background:var(--cyan);width:6px;height:6px;}
+.radar-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}
+.rl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--dim);}
+.rl-dot{width:7px;height:7px;border-radius:50%;}
+
+/* ── UPCOMING ── */
+.upcoming-list{display:flex;flex-direction:column;gap:8px;}
+.milestone{
+  background:var(--surf);border:1px solid var(--line);
+  border-left:3px solid var(--cyan);border-radius:10px;
+  padding:10px 13px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.milestone.estudio{border-left-color:var(--mint);}
+.milestone.trabajo{border-left-color:var(--amber);}
+.milestone.otro{border-left-color:var(--violet);}
+.ms-title{font-size:13px;font-weight:500;}
+.ms-tag{font-size:10px;color:var(--dim);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.ms-days{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.ms-days.urgent{color:var(--rose);}
+.add-btn{
+  width:100%;padding:11px;margin-top:10px;border-radius:10px;
+  border:1px dashed var(--line);background:transparent;color:var(--dim);
+  font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;
+}
+.add-btn:hover{background:var(--surf);}
+
+/* ── CHECKLIST ── */
+.card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:14px;}
+.check-row{display:flex;align-items:center;gap:11px;padding:9px 2px;border-bottom:1px solid var(--line);}
+.check-row:last-child{border-bottom:none;}
+.checkbox{
+  width:20px;height:20px;border-radius:6px;border:1.5px solid var(--dim);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s;background:transparent;
+}
+.checkbox.done{background:var(--mint);border-color:var(--mint);}
+.checkbox svg{width:11px;height:11px;opacity:0;transition:opacity .1s;}
+.checkbox.done svg{opacity:1;}
+.check-lbl{flex:1;font-size:13px;}
+.check-lbl.done{color:var(--dim);text-decoration:line-through;}
+.check-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px;}
+.check-del:hover{color:var(--rose);}
+.prog-mini{height:4px;background:var(--surf2);border-radius:3px;overflow:hidden;margin-top:10px;}
+.prog-mini>div{height:100%;background:var(--mint);border-radius:3px;transition:width .3s;}
+.check-foot{display:flex;justify-content:space-between;margin-top:7px;font-size:10.5px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+.check-add-row{display:flex;gap:8px;margin-top:10px;}
+.check-add-row input{flex:1;background:var(--surf2);border:1px solid var(--line);color:var(--text);padding:8px 11px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
+.check-add-row input:focus{border-color:rgba(0,212,255,.4);}
+.check-add-row input::placeholder{color:var(--muted);}
+.btn-add-task{background:var(--cyan);color:#0B1220;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;white-space:nowrap;}
+
+/* ── MI RUTA ── */
+.ruta-card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:16px;}
+.ruta-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.ruta-name{font-size:15px;font-weight:700;}
+.ruta-plat{font-size:11px;color:var(--cyan);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.ruta-pct{font-size:24px;font-weight:700;color:var(--cyan);font-family:'Space Grotesk',sans-serif;}
+.ruta-pct-l{font-size:9px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-align:right;}
+.prog-bar{height:6px;background:var(--surf2);border-radius:4px;overflow:hidden;margin-bottom:14px;}
+.prog-bar>div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:4px;transition:width .4s;}
+.etapas{display:flex;flex-direction:column;gap:8px;}
+.etapa{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:var(--surf2);font-size:12.5px;}
+.etapa-ico{font-size:14px;flex-shrink:0;}
+.etapa-txt{flex:1;}
+.etapa-pct{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--dim);white-space:nowrap;}
+.add-etapa-row{display:flex;gap:8px;margin-top:10px;}
+.add-etapa-row input{flex:1;background:var(--surf2);border:1px solid var(--line);color:var(--text);padding:8px 11px;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.add-etapa-row input::placeholder{color:var(--muted);}
+.add-etapa-row input:focus{border-color:rgba(0,212,255,.4);}
+.btn-add-etapa{background:var(--surf2);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;white-space:nowrap;}
+.btn-add-etapa:hover{border-color:var(--dim);}
+
+/* ── MODAL HITO ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-end;justify-content:center;z-index:500;padding:0;}
+.modal-bg.on{display:flex;}
+.modal{background:var(--surf);border-radius:18px 18px 0 0;width:100%;max-width:480px;padding:22px 20px;border-top:1px solid var(--line);}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:14px;}
+.modal label{font-size:10.5px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:5px;margin-top:12px;}
+.modal input,.modal select{width:100%;background:var(--surf2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
+.modal input:focus,.modal select:focus{border-color:rgba(0,212,255,.4);}
+.modal-actions{display:flex;gap:8px;margin-top:18px;}
+.modal-actions button{flex:1;padding:11px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-cancel{background:var(--surf2);color:var(--dim);}
+.btn-save{background:var(--cyan);color:#0B1220;font-family:'Space Grotesk',sans-serif;}
+
+/* ── FOOTER ── */
+.foot{text-align:center;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;padding:20px;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ WIZARD ════════════════ -->
+<div id="wizard">
+  <div class="wiz-card">
+    <div class="wiz-logo">
+      <div class="wiz-logo-badge">B</div>
+      <div class="wiz-logo-name">Bitácora<em>Tech</em></div>
+    </div>
+    <div class="wiz-progress" id="wizPips"></div>
+
+    <!-- PASO 1: Nombre -->
+    <div class="wiz-step on" id="ws0">
+      <div class="wiz-eye">Paso 1 de 4</div>
+      <div class="wiz-title">Bienvenido 👋<br>¿Cómo te llamas?</div>
+      <div class="wiz-sub">Tu panel es completamente personal. Nadie más lo ve.</div>
+      <label class="wiz-label">Tu nombre</label>
+      <input class="wiz-input" id="wNombre" placeholder="Ej: Laura, Carlos, Andrés..." maxlength="40">
+      <div class="wiz-actions">
+        <button class="btn-wiz-next" id="wBtn0" onclick="wizNext(0)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- PASO 2: Meta -->
+    <div class="wiz-step" id="ws1">
+      <div class="wiz-eye">Paso 2 de 4</div>
+      <div class="wiz-title">¿Cuál es tu<br>meta principal?</div>
+      <div class="wiz-sub">¿Hacia dónde quieres ir? Puedes cambiarlo después.</div>
+      <label class="wiz-label">Tu meta en tecnología</label>
+      <input class="wiz-input" id="wMeta" placeholder="Ej: Trabajar en IA, conseguir mi primer empleo tech..." maxlength="80">
+      <div class="wiz-actions">
+        <button class="btn-wiz-back" onclick="wizBack(1)">← Atrás</button>
+        <button class="btn-wiz-next" id="wBtn1" onclick="wizNext(1)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- PASO 3: Plataforma y tiempo -->
+    <div class="wiz-step" id="ws2">
+      <div class="wiz-eye">Paso 3 de 4</div>
+      <div class="wiz-title">¿Dónde estudias<br>y cuánto tiempo tienes?</div>
+      <div class="wiz-sub">No importa dónde — puede ser una app, tu universidad, videos, un libro. Todo vale.</div>
+      <label class="wiz-label">Plataforma o lugar donde estudias</label>
+      <input class="wiz-input" id="wPlat" placeholder="Ej: Mi universidad, una app de cursos, videos online..." maxlength="60">
+      <label class="wiz-label">Tiempo disponible al día</label>
+      <div class="wiz-chips" id="timeChips">
+        <div class="chip" data-val="Menos de 1 hora">Menos de 1h</div>
+        <div class="chip" data-val="1-2 horas">1-2 horas</div>
+        <div class="chip" data-val="2-4 horas">2-4 horas</div>
+        <div class="chip" data-val="Más de 4 horas">+4 horas</div>
+        <div class="chip" data-val="Variable">Variable</div>
+      </div>
+      <div class="wiz-actions">
+        <button class="btn-wiz-back" onclick="wizBack(2)">← Atrás</button>
+        <button class="btn-wiz-next" id="wBtn2" onclick="wizNext(2)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- PASO 4: Primer curso -->
+    <div class="wiz-step" id="ws3">
+      <div class="wiz-eye">Paso 4 de 4</div>
+      <div class="wiz-title">¿Qué estás<br>estudiando ahora?</div>
+      <div class="wiz-sub">El nombre de tu curso, tema o materia activa. Si aún no tienes uno, escribe lo que quieres empezar.</div>
+      <label class="wiz-label">Nombre de tu curso o tema actual</label>
+      <input class="wiz-input" id="wCurso" placeholder="Ej: Python para principiantes, Álgebra lineal, Diseño UX..." maxlength="70">
+      <div class="wiz-actions">
+        <button class="btn-wiz-back" onclick="wizBack(3)">← Atrás</button>
+        <button class="btn-wiz-next" id="wBtn3" onclick="wizFinal()">✓ Crear mi panel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ DASHBOARD ════════════════ -->
+<div id="dashboard">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-in">
+      <div class="top-brand">
+        <div class="top-badge">B</div>
+        <div class="top-name">Bitácora<em>Tech</em></div>
+      </div>
+      <div class="today-txt" id="topFecha">—</div>
+      <div class="top-right">
+        <button class="btn-edit-profile" onclick="editProfile()">✎ Mi perfil</button>
+        <div class="streak-wrap">
+          <div class="streak-n" id="streakNum">0</div>
+          <div class="streak-l">racha días</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- SALUDO -->
+    <div class="greeting" id="greetingBox">
+      <div class="greeting-left">
+        <h2 id="greetName">Hola 👋</h2>
+        <p id="greetMeta" style="color:var(--dim);font-size:13px;"></p>
+      </div>
+      <div class="greeting-meta">
+        <div id="greetPlat" style="color:var(--dim);"></div>
+        <span id="greetTime"></span>
+      </div>
+    </div>
+
+    <!-- RADAR -->
+    <div class="sec-head">
+      <div><div class="sec-eye">Próximos 14 días</div><div class="sec-h">Radar de compromisos</div></div>
+    </div>
+    <div class="radar">
+      <div class="radar-track" id="radarTrack"></div>
+      <div class="radar-legend">
+        <div class="rl-item"><span class="rl-dot" style="background:var(--cyan)"></span>Personal</div>
+        <div class="rl-item"><span class="rl-dot" style="background:var(--mint)"></span>Estudio</div>
+        <div class="rl-item"><span class="rl-dot" style="background:var(--amber)"></span>Trabajo</div>
+        <div class="rl-item"><span class="rl-dot" style="background:var(--violet)"></span>Otro</div>
+      </div>
+    </div>
+
+    <!-- PRÓXIMOS HITOS -->
+    <div class="sec-head">
+      <div><div class="sec-eye">Lo más urgente</div><div class="sec-h">Próximos hitos</div></div>
+    </div>
+    <div class="upcoming-list" id="upcomingList"></div>
+    <button class="add-btn" onclick="openModal()">+ Añadir hito o fecha límite</button>
+
+    <!-- CHECKLIST -->
+    <div class="sec-head">
+      <div><div class="sec-eye">Hoy</div><div class="sec-h">Mi checklist diario</div></div>
+    </div>
+    <div class="card">
+      <div id="checkContainer"></div>
+      <div class="prog-mini"><div id="checkBar" style="width:0%"></div></div>
+      <div class="check-foot">
+        <span id="checkCount">0/0 completadas</span>
+        <span>Se reinicia cada día</span>
+      </div>
+      <div class="check-add-row">
+        <input type="text" id="newTaskInput" placeholder="Añade una tarea para hoy..." maxlength="80">
+        <button class="btn-add-task" onclick="addTask()">+ Añadir</button>
+      </div>
+    </div>
+
+    <!-- MI RUTA -->
+    <div class="sec-head">
+      <div><div class="sec-eye">Mi formación</div><div class="sec-h">Mi ruta de estudio</div></div>
+    </div>
+    <div class="ruta-card">
+      <div class="ruta-head">
+        <div>
+          <div class="ruta-name" id="rutaNombre">—</div>
+          <div class="ruta-plat" id="rutaPlat">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ruta-pct" id="rutaPct">0%</div>
+          <div class="ruta-pct-l">progreso</div>
+        </div>
+      </div>
+      <div class="prog-bar"><div id="rutaBar" style="width:0%"></div></div>
+      <div class="etapas" id="etapasContainer"></div>
+      <div class="add-etapa-row">
+        <input type="text" id="newEtapaInput" placeholder="Añade una etapa o módulo..." maxlength="70">
+        <button class="btn-add-etapa" onclick="addEtapa()">+ Etapa</button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <div class="foot">
+    BitácoraTech · Tu panel personal · Datos guardados en tu dispositivo<br>
+    <a href="https://bitacoratech.vercel.app" style="color:var(--muted);">bitacoratech.vercel.app</a>
+  </div>
+</div>
+
+<!-- MODAL HITO -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Nuevo hito o fecha límite</h3>
+    <label>Título</label>
+    <input type="text" id="mTitle" placeholder="Ej: Examen final, Entregar proyecto...">
+    <label>Fecha</label>
+    <input type="date" id="mDate">
+    <label>Categoría</label>
+    <select id="mCat">
+      <option value="estudio">📚 Estudio</option>
+      <option value="personal">⭐ Personal</option>
+      <option value="trabajo">💼 Trabajo</option>
+      <option value="otro">✦ Otro</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveHito()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════
+let profile = null;
+let state = {
+  checklist: [],
+  checkDate: null,
+  milestones: [],
+  etapas: [],
+  streak: 0,
+  lastDate: null
+};
+
+const DOW = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'];
+const isoToday = () => new Date().toISOString().slice(0,10);
+const dayOffset = n => { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n); return d; };
+const isoOffset = n => dayOffset(n).toISOString().slice(0,10);
+
+// ═══════════════════════════════════
+// PERSISTENCIA — localStorage con fallback en memoria
+// ═══════════════════════════════════
+let memStore = {};
+const store = {
+  get(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return memStore[k]||null; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ memStore[k]=v; } }
+};
+
+// ═══════════════════════════════════
+// WIZARD
+// ═══════════════════════════════════
+let wizStep = 0;
+let wTime = '';
+
+function wizInit(){
+  const pips = document.getElementById('wizPips');
+  [0,1,2,3].forEach(i=>{
+    const p = document.createElement('div');
+    p.className = 'wiz-pip' + (i===0?' active':'');
+    p.id = 'pip'+i;
+    pips.appendChild(p);
+  });
+  document.querySelectorAll('#timeChips .chip').forEach(c=>{
+    c.onclick = () => {
+      document.querySelectorAll('#timeChips .chip').forEach(x=>x.classList.remove('selected'));
+      c.classList.add('selected');
+      wTime = c.dataset.val;
+    };
+  });
+}
+
+function wizUpdatePips(step){
+  [0,1,2,3].forEach(i=>{
+    const p = document.getElementById('pip'+i);
+    p.className = 'wiz-pip' + (i<step?' done':i===step?' active':'');
+  });
+}
+
+function wizNext(step){
+  if(step===0 && !document.getElementById('wNombre').value.trim()) return;
+  if(step===1 && !document.getElementById('wMeta').value.trim()) return;
+  if(step===2 && (!document.getElementById('wPlat').value.trim() || !wTime)) return;
+  document.getElementById('ws'+step).classList.remove('on');
+  wizStep = step+1;
+  document.getElementById('ws'+wizStep).classList.add('on');
+  wizUpdatePips(wizStep);
+}
+
+function wizBack(step){
+  document.getElementById('ws'+step).classList.remove('on');
+  wizStep = step-1;
+  document.getElementById('ws'+wizStep).classList.add('on');
+  wizUpdatePips(wizStep);
+}
+
+function wizFinal(){
+  const curso = document.getElementById('wCurso').value.trim();
+  profile = {
+    nombre: document.getElementById('wNombre').value.trim(),
+    meta:   document.getElementById('wMeta').value.trim(),
+    plat:   document.getElementById('wPlat').value.trim(),
+    tiempo: wTime,
+    curso:  curso || 'Mi curso principal'
+  };
+  store.set('bt-profile', profile);
+  // estado inicial limpio
+  state.checklist = [];
+  state.checkDate = isoToday();
+  state.milestones = [];
+  state.etapas = curso ? [{id:'e1',txt:curso,done:false}] : [];
+  state.streak = 0;
+  state.lastDate = null;
+  store.set('bt-state', state);
+  launchDashboard();
+}
+
+// ═══════════════════════════════════
+// LANZAR DASHBOARD
+// ═══════════════════════════════════
+function launchDashboard(){
+  document.getElementById('wizard').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  checkDayRollover();
+  renderAll();
+}
+
+function checkDayRollover(){
+  const today = isoToday();
+  if(state.checkDate !== today){
+    const yesterday = isoOffset(-1);
+    const allDone = state.checklist.length>0 && state.checklist.every(c=>c.done);
+    if(allDone && state.checkDate === yesterday){
+      state.streak = (state.streak||0)+1;
+    } else if(state.checkDate !== yesterday){
+      state.streak = 0;
+    } else if(!allDone){
+      state.streak = 0;
+    }
+    state.checklist = [];
+    state.checkDate = today;
+    save();
+  }
+}
+
+function save(){ store.set('bt-state', state); }
+
+// ═══════════════════════════════════
+// RENDER COMPLETO
+// ═══════════════════════════════════
+function renderAll(){
+  renderHeader();
+  renderGreeting();
+  renderRadar();
+  renderUpcoming();
+  renderChecklist();
+  renderRuta();
+}
+
+function renderHeader(){
+  const d = new Date();
+  document.getElementById('topFecha').textContent =
+    d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'});
+  document.getElementById('streakNum').textContent = state.streak||0;
+}
+
+function renderGreeting(){
+  if(!profile) return;
+  document.getElementById('greetName').textContent = `Hola, ${profile.nombre} 👋`;
+  document.getElementById('greetMeta').textContent = `Meta: ${profile.meta}`;
+  document.getElementById('greetPlat').textContent = profile.plat;
+  document.getElementById('greetTime').textContent = profile.tiempo + '/día';
+}
+
+// ── RADAR ──
+function renderRadar(){
+  const track = document.getElementById('radarTrack');
+  track.innerHTML = '';
+  const todayIso = isoToday();
+  for(let i=0;i<14;i++){
+    const d = dayOffset(i);
+    const iso = d.toISOString().slice(0,10);
+    const blips = state.milestones.filter(m=>m.date===iso);
+    const col = document.createElement('div');
+    col.className='radar-day'+(iso===todayIso?' today':'');
+    const stack = blips.map(b=>`<div class="blip ${b.cat}" title="${b.title}"></div>`).join('');
+    col.innerHTML=`
+      <span class="r-dow">${DOW[d.getDay()]}</span>
+      <span class="r-dnum">${d.getDate()}</span>
+      <div class="blip-stack">${stack}</div>
+      <div class="r-axis"></div>`;
+    track.appendChild(col);
+  }
+}
+
+// ── UPCOMING ──
+function renderUpcoming(){
+  const list = document.getElementById('upcomingList');
+  list.innerHTML='';
+  const todayIso = isoToday();
+  const sorted = [...state.milestones]
+    .filter(m=>m.date>=todayIso)
+    .sort((a,b)=>a.date.localeCompare(b.date))
+    .slice(0,5);
+  if(!sorted.length){
+    list.innerHTML=`<div class="card" style="text-align:center;color:var(--dim);font-size:12px;padding:18px;">Sin hitos próximos. Añade uno abajo.</div>`;
+    return;
+  }
+  sorted.forEach(m=>{
+    const diff = Math.round((new Date(m.date+'T00:00:00')-new Date(new Date().toDateString()))/86400000);
+    const label = diff===0?'HOY':diff===1?'MAÑANA':diff+' días';
+    const el = document.createElement('div');
+    el.className='milestone '+m.cat;
+    el.innerHTML=`
+      <div>
+        <div class="ms-title">${m.title}</div>
+        <div class="ms-tag">${catLabel(m.cat)}</div>
+      </div>
+      <div class="ms-days ${diff<=1?'urgent':''}">${label}</div>`;
+    list.appendChild(el);
+  });
+}
+
+function catLabel(c){return{personal:'Personal',estudio:'Estudio',trabajo:'Trabajo',otro:'Otro'}[c]||'Otro';}
+
+// ── CHECKLIST ──
+function renderChecklist(){
+  const c = document.getElementById('checkContainer');
+  c.innerHTML='';
+  if(!state.checklist.length){
+    c.innerHTML=`<div style="padding:12px 2px;font-size:12.5px;color:var(--muted);">Añade tu primera tarea del día abajo 👇</div>`;
+  } else {
+    state.checklist.forEach(item=>{
+      const row = document.createElement('div');
+      row.className='check-row';
+      row.innerHTML=`
+        <div class="checkbox ${item.done?'done':''}" data-id="${item.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0B1220" stroke-width="3"><path d="M5 12l5 5L19 7"/></svg>
+        </div>
+        <div class="check-lbl ${item.done?'done':''}">${item.txt}</div>
+        <button class="check-del" data-id="${item.id}">×</button>`;
+      c.appendChild(row);
+    });
+    c.querySelectorAll('.checkbox').forEach(cb=>{
+      cb.addEventListener('click',()=>{ toggleTask(cb.dataset.id); });
+    });
+    c.querySelectorAll('.check-del').forEach(btn=>{
+      btn.addEventListener('click',()=>{ deleteTask(btn.dataset.id); });
+    });
+  }
+  const done = state.checklist.filter(x=>x.done).length;
+  const total = state.checklist.length;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('checkBar').style.width = pct+'%';
+  document.getElementById('checkCount').textContent = `${done}/${total} completadas`;
+  document.getElementById('streakNum').textContent = state.streak||0;
+}
+
+function addTask(){
+  const inp = document.getElementById('newTaskInput');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  state.checklist.push({id:'t'+Date.now(),txt,done:false});
+  inp.value='';
+  save();
+  renderChecklist();
+}
+
+function toggleTask(id){
+  const item = state.checklist.find(x=>x.id===id);
+  if(item) item.done=!item.done;
+  save();
+  renderChecklist();
+}
+
+function deleteTask(id){
+  state.checklist = state.checklist.filter(x=>x.id!==id);
+  save();
+  renderChecklist();
+}
+
+document.getElementById('newTaskInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
+
+// ── RUTA ──
+function renderRuta(){
+  if(!profile) return;
+  document.getElementById('rutaNombre').textContent = profile.curso||'Mi curso';
+  document.getElementById('rutaPlat').textContent = profile.plat||'Mi plataforma';
+  const done = state.etapas.filter(e=>e.done).length;
+  const total = state.etapas.length;
+  const pct = total ? Math.round((done/total)*100) : 0;
+  document.getElementById('rutaPct').textContent = pct+'%';
+  document.getElementById('rutaBar').style.width = pct+'%';
+  const cont = document.getElementById('etapasContainer');
+  cont.innerHTML='';
+  if(!state.etapas.length){
+    cont.innerHTML=`<div style="font-size:12px;color:var(--muted);padding:8px 0;">Añade etapas o módulos de tu curso abajo.</div>`;
+    return;
+  }
+  state.etapas.forEach(et=>{
+    const el = document.createElement('div');
+    el.className='etapa';
+    el.style.cursor='pointer';
+    el.style.opacity = et.done ? '0.55' : '1';
+    el.innerHTML=`
+      <span class="etapa-ico">${et.done?'✅':'⬜'}</span>
+      <span class="etapa-txt" style="${et.done?'text-decoration:line-through;color:var(--dim)':''}">${et.txt}</span>
+      <span class="etapa-pct">${et.done?'Listo':'Pendiente'}</span>`;
+    el.addEventListener('click',()=>{ toggleEtapa(et.id); });
+    cont.appendChild(el);
+  });
+}
+
+function addEtapa(){
+  const inp = document.getElementById('newEtapaInput');
+  const txt = inp.value.trim();
+  if(!txt) return;
+  state.etapas.push({id:'e'+Date.now(),txt,done:false});
+  inp.value='';
+  save();
+  renderRuta();
+}
+
+function toggleEtapa(id){
+  const et = state.etapas.find(e=>e.id===id);
+  if(et) et.done=!et.done;
+  save();
+  renderRuta();
+}
+
+document.getElementById('newEtapaInput').addEventListener('keydown',e=>{if(e.key==='Enter')addEtapa();});
+
+// ── MODAL HITOS ──
+function openModal(){
+  document.getElementById('mDate').value=isoToday();
+  document.getElementById('mTitle').value='';
+  document.getElementById('modalBg').classList.add('on');
+}
+function closeModal(){ document.getElementById('modalBg').classList.remove('on'); }
+document.getElementById('modalBg').addEventListener('click',e=>{ if(e.target===document.getElementById('modalBg')) closeModal(); });
+
+function saveHito(){
+  const title = document.getElementById('mTitle').value.trim();
+  const date = document.getElementById('mDate').value;
+  const cat = document.getElementById('mCat').value;
+  if(!title||!date) return;
+  state.milestones.push({id:'m'+Date.now(),title,date,cat});
+  save();
+  closeModal();
+  renderRadar();
+  renderUpcoming();
+}
+
+// ── EDITAR PERFIL ──
+function editProfile(){
+  document.getElementById('wNombre').value = profile.nombre||'';
+  document.getElementById('wMeta').value = profile.meta||'';
+  document.getElementById('wPlat').value = profile.plat||'';
+  document.getElementById('wCurso').value = profile.curso||'';
+  wTime = profile.tiempo||'';
+  document.querySelectorAll('#timeChips .chip').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.val===wTime);
+  });
+  [0,1,2,3].forEach(i=>document.getElementById('ws'+i).classList.remove('on'));
+  document.getElementById('ws0').classList.add('on');
+  wizStep=0; wizUpdatePips(0);
+  document.getElementById('wizard').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+}
+
+// ═══════════════════════════════════
+// BOOT
+// ═══════════════════════════════════
+function boot(){
+  wizInit();
+  const savedProfile = store.get('bt-profile');
+  const savedState = store.get('bt-state');
+  if(savedProfile){
+    profile = savedProfile;
+    if(savedState) state = savedState;
+    checkDayRollover();
+    document.getElementById('wizard').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    renderAll();
+  }
+  // si no hay perfil, el wizard ya está visible por defecto
+}
+
+boot();
+</script>
+</body>
+</html>
