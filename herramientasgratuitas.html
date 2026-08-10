@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5 Herramientas Gratuitas · BitácoraTech 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080D1A; --surf:#0D1625; --surf2:#132036; --line:#1C2D46;
+  --cyan:#00D4FF; --amber:#F2A65A; --mint:#5FB89C; --violet:#8C7CF0;
+  --rose:#E0556B; --text:#E8EDF5; --dim:#7C8AA3; --muted:#3D5068;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:var(--cyan);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* ── PAGE ── */
+.page{max-width:680px;margin:0 auto;padding:40px 24px 60px;}
+
+/* ── HEADER ── */
+.hdr{text-align:center;margin-bottom:40px;}
+.hdr-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cyan);border:1px solid rgba(0,212,255,.3);
+  background:rgba(0,212,255,.06);padding:5px 14px;border-radius:20px;
+  margin-bottom:18px;
+}
+.hdr-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--dim);letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:10px;
+}
+.hdr h1{
+  font-family:'Syne',sans-serif;font-size:clamp(26px,5vw,40px);
+  font-weight:800;line-height:1.1;margin-bottom:14px;
+}
+.hdr h1 span{color:var(--cyan);}
+.hdr-sub{font-size:15px;color:var(--dim);line-height:1.7;max-width:500px;margin:0 auto;}
+.hdr-sub strong{color:var(--text);}
+
+/* ── DIVIDER ── */
+.div{border:none;border-top:1px solid var(--line);margin:32px 0;}
+
+/* ── TOOLS ── */
+.tools{display:flex;flex-direction:column;gap:16px;}
+.tool{
+  background:var(--surf);border:1px solid var(--line);
+  border-radius:14px;padding:20px 20px 20px 18px;
+  display:grid;grid-template-columns:auto 1fr auto;
+  gap:16px;align-items:start;
+  border-left:3px solid var(--line);
+  transition:border-color .2s;
+}
+.tool:hover{border-left-color:var(--cyan);}
+.tool.t1{border-left-color:var(--cyan);}
+.tool.t2{border-left-color:var(--violet);}
+.tool.t3{border-left-color:var(--mint);}
+.tool.t4{border-left-color:var(--amber);}
+.tool.t5{border-left-color:var(--rose);}
+.tool-num{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);padding-top:2px;width:20px;
+}
+.tool-body{}
+.tool-cat{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:5px;
+}
+.tool-name{
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  margin-bottom:6px;
+}
+.tool-desc{font-size:13px;color:var(--dim);line-height:1.65;}
+.tool-desc strong{color:var(--text);font-weight:500;}
+.tool-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.tag{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  padding:2px 8px;border-radius:4px;
+  background:var(--surf2);border:1px solid var(--line);color:var(--dim);
+}
+.tool-link{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11.5px;font-family:'JetBrains Mono',monospace;
+  color:var(--cyan);white-space:nowrap;padding-top:2px;
+}
+.tool-link:hover{text-decoration:none;opacity:.8;}
+
+/* ── BONUS ── */
+.bonus{
+  background:linear-gradient(130deg,rgba(0,212,255,.06),rgba(140,124,240,.06));
+  border:1px solid rgba(0,212,255,.18);border-radius:14px;
+  padding:22px 20px;margin-top:30px;
+}
+.bonus-eye{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);
+  margin-bottom:8px;
+}
+.bonus h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px;}
+.bonus p{font-size:13px;color:var(--dim);line-height:1.65;}
+.bonus p strong{color:var(--text);}
+.bonus-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--cyan);color:#080D1A;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  padding:11px 22px;border-radius:9px;margin-top:16px;
+  border:none;cursor:pointer;transition:opacity .15s;
+}
+.bonus-cta:hover{opacity:.88;text-decoration:none;}
+
+/* ── FOOTER ── */
+.foot{
+  text-align:center;margin-top:40px;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);
+  line-height:1.8;
+}
+.foot a{color:var(--muted);}
+.foot a:hover{color:var(--dim);}
+
+/* PRINT */
+@media print{
+  body{background:#fff;color:#111;}
+  .tool{background:#f9f9f9;border:1px solid #ddd;}
+  .bonus{background:#f0f8ff;border:1px solid #b3d9f2;}
+  .bonus-cta{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-badge">🎁 Recurso gratuito · BitácoraTech</div>
+    <div class="hdr-eyebrow">Para estudiantes latinos en tecnología · 2026</div>
+    <h1>Las <span>5 herramientas gratuitas</span> que necesitas para aprender tecnología este año</h1>
+    <p class="hdr-sub">Sin pagar suscripciones. Sin experiencia previa. <strong>Solo tú, tu computador y las herramientas correctas.</strong></p>
+  </div>
+
+  <hr class="div">
+
+  <!-- TOOLS -->
+  <div class="tools">
+
+    <!-- 1 -->
+    <div class="tool t1">
+      <div class="tool-num">01</div>
+      <div class="tool-body">
+        <div class="tool-cat">Aprendizaje estructurado</div>
+        <div class="tool-name">freeCodeCamp</div>
+        <div class="tool-desc">
+          El punto de partida más sólido para programación desde cero. Cubre HTML, CSS, JavaScript, Python, Data Analysis y más. <strong>Todo gratuito, con certificados reales</strong> que puedes agregar a tu LinkedIn. Más de 3.000 horas de contenido sin costo.
+        </div>
+        <div class="tool-tags">
+          <span class="tag">100% gratis</span>
+          <span class="tag">Certificados</span>
+          <span class="tag">En inglés</span>
+          <span class="tag">Web + Data</span>
+        </div>
+      </div>
+      <a href="https://www.freecodecamp.org" target="_blank" class="tool-link">→ freecodecamp.org</a>
+    </div>
+
+    <!-- 2 -->
+    <div class="tool t2">
+      <div class="tool-num">02</div>
+      <div class="tool-body">
+        <div class="tool-cat">IA y Machine Learning</div>
+        <div class="tool-name">fast.ai — Practical Deep Learning</div>
+        <div class="tool-desc">
+          El curso de IA más práctico del mundo, usado por ingenieros en Google, Meta y Amazon. <strong>Enfoque "code-first"</strong>: aprendes construyendo, no memorizando fórmulas. Usa Python y PyTorch. Gratuito y actualizado para 2024.
+        </div>
+        <div class="tool-tags">
+          <span class="tag">100% gratis</span>
+          <span class="tag">Python</span>
+          <span class="tag">PyTorch</span>
+          <span class="tag">Deep Learning</span>
+        </div>
+      </div>
+      <a href="https://www.fast.ai" target="_blank" class="tool-link">→ fast.ai</a>
+    </div>
+
+    <!-- 3 -->
+    <div class="tool t3">
+      <div class="tool-num">03</div>
+      <div class="tool-body">
+        <div class="tool-cat">Cloud y certificaciones</div>
+        <div class="tool-name">Google Cloud Skills Boost</div>
+        <div class="tool-desc">
+          Labs reales en la infraestructura de Google — no simulaciones. Practicas con BigQuery, Vertex AI, Dataflow y más. <strong>Los créditos gratuitos iniciales cubren varias semanas de práctica.</strong> Las insignias que ganas son visibles en tu perfil público y reconocidas por empresas.
+        </div>
+        <div class="tool-tags">
+          <span class="tag">Labs reales</span>
+          <span class="tag">GCP</span>
+          <span class="tag">BigQuery</span>
+          <span class="tag">Créditos gratis</span>
+        </div>
+      </div>
+      <a href="https://cloudskillsboost.google" target="_blank" class="tool-link">→ cloudskillsboost.google</a>
+    </div>
+
+    <!-- 4 -->
+    <div class="tool t4">
+      <div class="tool-num">04</div>
+      <div class="tool-body">
+        <div class="tool-cat">Práctica y portafolio</div>
+        <div class="tool-name">Kaggle</div>
+        <div class="tool-desc">
+          La plataforma de competencias de datos de Google. Tiene <strong>cursos gratuitos de Python, ML y SQL</strong>, datasets reales para practicar, y competencias donde puedes ganar dinero y visibilidad. Un perfil activo en Kaggle vale más que muchos certificados en el mundo de Data Science.
+        </div>
+        <div class="tool-tags">
+          <span class="tag">100% gratis</span>
+          <span class="tag">Python</span>
+          <span class="tag">SQL</span>
+          <span class="tag">Portafolio real</span>
+        </div>
+      </div>
+      <a href="https://www.kaggle.com" target="_blank" class="tool-link">→ kaggle.com</a>
+    </div>
+
+    <!-- 5 -->
+    <div class="tool t5">
+      <div class="tool-num">05</div>
+      <div class="tool-body">
+        <div class="tool-cat">Entorno de desarrollo</div>
+        <div class="tool-name">Google Colab</div>
+        <div class="tool-desc">
+          Un cuaderno de Python que corre en la nube — <strong>sin instalar nada en tu computador.</strong> Incluye GPUs gratuitas para entrenar modelos de IA. Es la herramienta que usan investigadores de universidades de todo el mundo para sus experimentos. Perfecta si tu equipo no es potente.
+        </div>
+        <div class="tool-tags">
+          <span class="tag">GPU gratis</span>
+          <span class="tag">Sin instalación</span>
+          <span class="tag">Python</span>
+          <span class="tag">IA / ML</span>
+        </div>
+      </div>
+      <a href="https://colab.research.google.com" target="_blank" class="tool-link">→ colab.research.google.com</a>
+    </div>
+
+  </div><!-- /tools -->
+
+  <!-- BONUS -->
+  <div class="bonus">
+    <div class="bonus-eye">✦ Bonus exclusivo</div>
+    <h3>Ahora organiza tu aprendizaje con BitácoraTech</h3>
+    <p>Tienes las herramientas. Lo que marca la diferencia es <strong>el sistema para usarlas de forma consistente.</strong> BitácoraTech es el panel gratuito que te ayuda a registrar tu avance diario, mantener tu racha y nunca perder el hilo — sin importar dónde estudias.</p>
+    <a href="https://bitacoratech.vercel.app#descarga" class="bonus-cta">⬇ Descargar el panel gratis</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="foot">
+    BitácoraTech · Herramienta gratuita para estudiantes latinos en tecnología<br>
+    <a href="https://bitacoratech.vercel.app">bitacoratech.vercel.app</a> · Hecha desde Colombia 🇨🇴<br>
+    <span style="margin-top:6px;display:block;">Puedes guardar esta página o imprimirla — es tuya.</span>
+  </div>
+
+</div>
+</body>
+</html>
